@@ -1,0 +1,58 @@
+<form class="team-form" [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div class="team-form__group">
+    <label for="team-name">Team name</label>
+    <input id="team-name" type="text" formControlName="name" placeholder="e.g. Kanto Starters" />
+
+    @if ((form.controls.name.dirty || form.controls.name.touched || hasSubmitted()) && form.controls.name.invalid) {
+      @if (form.controls.name.errors?.['required']) {
+        <p class="team-form__error">Team name is required.</p>
+      } @else if (form.controls.name.errors?.['minlength']) {
+        <p class="team-form__error">Name must be at least 3 characters.</p>
+      } @else if (form.controls.name.errors?.['maxlength']) {
+        <p class="team-form__error">Name must be 30 characters or fewer.</p>
+      } @else if (form.controls.name.errors?.['nameTaken']) {
+        <p class="team-form__error">You already have a team with this name.</p>
+      }
+    } @else if (form.controls.name.pending) {
+      <p class="team-form__hint">Checking name…</p>
+    }
+  </div>
+
+  <div class="team-form__group">
+    <label>Pokémon ({{ selectedPokemon().length }}/6)</label>
+
+    @if (selectedPokemon().length > 0) {
+      <ul class="team-form__chips">
+        @for (pokemon of selectedPokemon(); track pokemon.id) {
+          <li class="team-form__chip">
+            @if (pokemon.spriteUrl) {
+              <img [src]="pokemon.spriteUrl" width="20" height="20" [alt]="pokemon.name" />
+            }
+            {{ pokemon.name }}
+            <button type="button" (click)="removePokemon(pokemon.id)" [attr.aria-label]="'Remove ' + pokemon.name">
+              ✕
+            </button>
+          </li>
+        }
+      </ul>
+    }
+
+    <app-pokemon-autocomplete
+      [excludeIds]="form.controls.pokemonIds.value"
+      [disabled]="selectedPokemon().length >= 6"
+      (pokemonSelected)="addPokemon($event)"
+    />
+
+    @if ((form.controls.pokemonIds.dirty || hasSubmitted()) && form.controls.pokemonIds.invalid) {
+      @if (form.controls.pokemonIds.errors?.['teamTooSmall']) {
+        <p class="team-form__error">Pick at least 1 Pokémon.</p>
+      } @else if (form.controls.pokemonIds.errors?.['teamTooLarge']) {
+        <p class="team-form__error">A team can have at most 6 Pokémon.</p>
+      }
+    }
+  </div>
+
+  <button type="submit" class="team-form__submit" [disabled]="form.invalid || form.pending">
+    Create team
+  </button>
+</form>

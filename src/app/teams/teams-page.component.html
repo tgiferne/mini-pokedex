@@ -1,0 +1,18 @@
+<section class="teams-page">
+  <div class="teams-page__column teams-page__column--form">
+    <h1 class="teams-page__title">Build a team</h1>
+    <app-team-builder-form />
+  </div>
+
+  <div class="teams-page__column teams-page__column--list">
+    <h2 class="teams-page__subtitle">Your teams</h2>
+    <app-team-list
+      [state]="teamsState()"
+      [allPokemon]="allPokemon()"
+      [selectedTeamId]="selectedTeamId()"
+      (teamSelect)="onSelectTeam($event)"
+      (teamDelete)="onDeleteTeam($event)"
+      (retry)="store.loadTeams()"
+    />
+  </div>
+</section>

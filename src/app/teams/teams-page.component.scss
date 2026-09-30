@@ -1,0 +1,16 @@
+.teams-page {
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  &__title,
+  &__subtitle {
+    margin: 0 0 1rem;
+  }
+
+  @media (max-width: 800px) {
+    grid-template-columns: 1fr;
+  }
+}

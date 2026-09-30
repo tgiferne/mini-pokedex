@@ -1,0 +1,46 @@
+@switch (state().status) {
+  @case ('loading') {
+    <app-skeleton [rows]="3" height="4rem" />
+  }
+  @case ('error') {
+    <app-error-state [message]="errorMessage()" (retry)="retry.emit()" />
+  }
+  @case ('empty') {
+    <app-empty-state message="No teams yet. Build your first one!" />
+  }
+  @case ('success') {
+    <ul class="team-list">
+      @for (row of rows(); track row.team.id) {
+        <li
+          class="team-list__item"
+          [class.team-list__item--selected]="row.team.id === selectedTeamId()"
+          (click)="teamSelect.emit(row.team.id)"
+        >
+          <div class="team-list__header">
+            <span class="team-list__name">{{ row.team.name }}</span>
+            <button
+              type="button"
+              class="team-list__delete"
+              (click)="teamDelete.emit(row.team.id); $event.stopPropagation()"
+              [attr.aria-label]="'Delete ' + row.team.name"
+            >
+              Delete
+            </button>
+          </div>
+
+          <div class="team-list__meta">
+            <span>{{ row.memberCount }} Pokémon</span>
+            <span>Total base stats: {{ row.totalBaseStats }}</span>
+          </div>
+
+          <div class="team-list__types">
+            @for (entry of row.typeDistribution; track entry[0]) {
+              <app-type-badge [type]="entry[0]" />
+              <span class="team-list__type-count">×{{ entry[1] }}</span>
+            }
+          </div>
+        </li>
+      }
+    </ul>
+  }
+}

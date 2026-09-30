@@ -1,0 +1,42 @@
+<div class="autocomplete">
+  <input
+    class="autocomplete__input"
+    type="text"
+    placeholder="Add a Pokémon…"
+    [formControl]="searchControl"
+    [disabled]="disabled()"
+    (focus)="onFocus()"
+    (blur)="onBlur()"
+    aria-label="Search Pokémon to add to the team"
+  />
+
+  @if (isOpen()) {
+    <div class="autocomplete__panel">
+      @switch (resultsState().status) {
+        @case ('loading') {
+          <app-skeleton [rows]="3" height="1.75rem" />
+        }
+        @case ('error') {
+          <app-error-state [message]="errorMessage()" (retry)="retry()" />
+        }
+        @case ('empty') {
+          <app-empty-state message="No matching Pokémon." />
+        }
+        @case ('success') {
+          <ul class="autocomplete__list">
+            @for (pokemon of matchList(); track pokemon.id) {
+              <li>
+                <button type="button" (mousedown)="select(pokemon)">
+                  @if (pokemon.spriteUrl) {
+                    <img [src]="pokemon.spriteUrl" width="24" height="24" [alt]="pokemon.name" />
+                  }
+                  {{ pokemon.name }}
+                </button>
+              </li>
+            }
+          </ul>
+        }
+      }
+    </div>
+  }
+</div>
