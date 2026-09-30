@@ -19,7 +19,7 @@ import { PokemonStore } from './state/pokemon.store';
   styleUrl: './pokedex-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PokedexPageComponent {
+export class PokedexPage {
   protected readonly store = inject(PokemonStore);
   private readonly selectors = inject(PokemonSelectors);
 

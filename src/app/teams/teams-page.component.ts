@@ -18,7 +18,7 @@ import { TeamStore } from './state/team.store';
   styleUrl: './teams-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TeamsPageComponent {
+export class TeamsPage {
   protected readonly store = inject(TeamStore);
   private readonly pokemonSelectors = inject(PokemonSelectors);
   private readonly cache = inject(CacheService);
