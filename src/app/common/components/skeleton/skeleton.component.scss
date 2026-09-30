@@ -1,0 +1,11 @@
+@use '../../styles/shared' as shared;
+
+.skeleton {
+  @extend %sk-shimmer;
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
