@@ -1,0 +1,23 @@
+<section class="pokedex-page">
+  <h1 class="pokedex-page__title">Pokédex</h1>
+
+  <app-pokedex-filters
+    [searchTerm]="searchTerm()"
+    [availableTypes]="availableTypes()"
+    [selectedType]="typeFilter()"
+    (searchTermChange)="store.setSearchTerm($event)"
+    (selectedTypeChange)="store.setTypeFilter($event)"
+  />
+
+  <app-pokedex-table
+    [state]="tableState()"
+    [sort]="sort()"
+    (sortChange)="onSortChange($event)"
+    (pageChange)="store.setPage($event)"
+    (pageSizeChange)="onPageSizeChange($event)"
+    (rowSelect)="selectedPokemonId.set($event)"
+    (retry)="store.loadPokemon()"
+  />
+</section>
+
+<app-pokemon-detail-panel [pokemonId]="selectedPokemonId()" (closePanel)="selectedPokemonId.set(null)" />

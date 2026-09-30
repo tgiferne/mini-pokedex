@@ -1,0 +1,83 @@
+@switch (state().status) {
+  @case ('loading') {
+    <div class="pokedex-table__skeleton">
+      <app-skeleton [rows]="8" height="2.5rem" />
+    </div>
+  }
+  @case ('error') {
+    <app-error-state [message]="errorMessage()" (retry)="retry.emit()" />
+  }
+  @case ('empty') {
+    <app-empty-state message="No Pokémon match your search." />
+  }
+  @case ('success') {
+    @let result = pageResult()!;
+    <div class="pokedex-table">
+      <table class="pokedex-table__table">
+        <thead>
+          <tr>
+            <th></th>
+            <th class="pokedex-table__sortable" (click)="sortChange.emit('name')">
+              Name {{ sortIndicator('name') }}
+            </th>
+            <th>Types</th>
+            @for (col of statColumns; track col.column) {
+              <th class="pokedex-table__sortable" (click)="sortChange.emit(col.column)">
+                {{ col.label }} {{ sortIndicator(col.column) }}
+              </th>
+            }
+            <th class="pokedex-table__sortable" (click)="sortChange.emit('total')">
+              Total {{ sortIndicator('total') }}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (pokemon of result.items; track pokemon.id) {
+            <tr class="pokedex-table__row" (click)="rowSelect.emit(pokemon.id)">
+              <td>
+                @if (pokemon.spriteUrl) {
+                  <img [src]="pokemon.spriteUrl" width="40" height="40" [alt]="pokemon.name" loading="lazy" />
+                }
+              </td>
+              <td class="pokedex-table__name">{{ pokemon.name }}</td>
+              <td>
+                @for (type of pokemon.types; track type) {
+                  <app-type-badge [type]="type" />
+                }
+              </td>
+              @for (col of statColumns; track col.column) {
+                <td>{{ pokemon.stats | statLookup: col.column }}</td>
+              }
+              <td class="pokedex-table__total">{{ totalBaseStats(pokemon) }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+
+      <div class="pokedex-table__footer">
+        <label class="pokedex-table__page-size">
+          Rows per page:
+          <select [value]="result.pageSize" (change)="onPageSizeSelect($any($event.target).value)">
+            @for (size of pageSizeOptions; track size) {
+              <option [value]="size">{{ size }}</option>
+            }
+          </select>
+        </label>
+
+        <div class="pokedex-table__pager">
+          <button type="button" [disabled]="result.page === 0" (click)="pageChange.emit(result.page - 1)">
+            Prev
+          </button>
+          <span>Page {{ result.page + 1 }} of {{ totalPages() }}</span>
+          <button
+            type="button"
+            [disabled]="result.page + 1 >= totalPages()"
+            (click)="pageChange.emit(result.page + 1)"
+          >
+            Next
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+}

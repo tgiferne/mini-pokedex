@@ -1,0 +1,29 @@
+.pokedex-filters {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+
+  &__search,
+  &__type {
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: var(--color-surface-2);
+    color: #fff;
+    font-size: 0.875rem;
+
+    &:focus {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 1px;
+    }
+  }
+
+  &__search {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__type {
+    width: 180px;
+  }
+}

@@ -1,0 +1,104 @@
+@use '../../../common/styles/shared' as shared;
+
+.pokedex-table {
+  overflow-x: auto;
+  @include shared.custom-scrollbar();
+
+  &__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+
+    th,
+    td {
+      padding: 0.5rem 0.75rem;
+      text-align: left;
+      white-space: nowrap;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    thead th {
+      color: rgba(255, 255, 255, 0.6);
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+  }
+
+  &__sortable {
+    cursor: pointer;
+    user-select: none;
+
+    &:hover {
+      color: #fff;
+    }
+  }
+
+  &__row {
+    cursor: pointer;
+    transition: background-color 0.1s ease;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.04);
+    }
+  }
+
+  &__name {
+    text-transform: capitalize;
+    font-weight: 600;
+  }
+
+  &__total {
+    font-weight: 700;
+    color: var(--color-accent);
+  }
+
+  &__skeleton {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    font-size: 0.8125rem;
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  &__page-size select {
+    margin-left: 0.5rem;
+    background: var(--color-surface-2);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+    padding: 0.2rem 0.4rem;
+  }
+
+  &__pager {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+
+    button {
+      background: var(--color-surface-2);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 4px;
+      padding: 0.25rem 0.75rem;
+      cursor: pointer;
+
+      &:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+
+      &:not(:disabled):hover {
+        background: rgba(255, 255, 255, 0.08);
+      }
+    }
+  }
+}
