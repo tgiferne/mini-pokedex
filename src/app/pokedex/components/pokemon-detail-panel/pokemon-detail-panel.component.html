@@ -1,64 +1,98 @@
 @if (pokemon(); as poke) {
-  <aside class="detail-panel" role="dialog" aria-modal="true" [attr.aria-label]="poke.name">
-    <button type="button" class="detail-panel__close" (click)="closePanel.emit()" aria-label="Close">
-      ✕
-    </button>
+  <div class="detail-overlay" (click)="onBackdropClick()">
+    <div
+      class="detail-device"
+      role="dialog"
+      aria-modal="true"
+      [attr.aria-label]="poke.name"
+      (click)="$event.stopPropagation()"
+    >
+      <!-- Left screen: identity -->
+      <section class="detail-device__panel detail-device__panel--info">
+        <div class="detail-device__dots">
+          <span></span><span></span>
+        </div>
 
-    <div class="detail-panel__header">
-      @if (poke.spriteUrl) {
-        <img [src]="poke.spriteUrl" width="96" height="96" [alt]="poke.name" />
-      }
-      <h2 class="detail-panel__name">{{ poke.name }}</h2>
-      <div class="detail-panel__types">
-        @for (type of poke.types; track type) {
-          <app-type-badge [type]="type" />
-        }
-      </div>
-    </div>
+        <div class="detail-device__info-screen">
+          <h2 class="detail-device__name">{{ poke.name }}</h2>
+          <div class="detail-device__sprite-frame">
+            @if (poke.spriteUrl) {
+              <img [src]="poke.spriteUrl" [alt]="poke.name" class="detail-device__sprite" />
+            }
+          </div>
+          <div class="detail-device__types">
+            @for (type of poke.types; track type) {
+              <app-type-badge [type]="type" />
+            }
+          </div>
+        </div>
 
-    <dl class="detail-panel__facts">
-      <div>
-        <dt>Height</dt>
-        <dd>{{ poke.height / 10 }} m</dd>
-      </div>
-      <div>
-        <dt>Weight</dt>
-        <dd>{{ poke.weight / 10 }} kg</dd>
-      </div>
-      <div>
-        <dt>Total base stats</dt>
-        <dd>{{ totalBaseStats(poke) }}</dd>
-      </div>
-    </dl>
+        <button
+          type="button"
+          class="detail-device__close-btn"
+          (click)="closePanel.emit()"
+          aria-label="Close"
+          title="Close"
+        ></button>
 
-    <app-stat-radar-chart [pokemon]="poke" />
+        <div class="detail-device__readout">
+          <div>No. {{ poke.id.toString().padStart(3, '0') }}</div>
+          <div>HT: {{ poke.height / 10 }}m &nbsp; WT: {{ poke.weight / 10 }}kg</div>
+          <div>Total base stats: {{ totalBaseStats(poke) }}</div>
+        </div>
 
-    <h3 class="detail-panel__section-title">Abilities</h3>
-    @switch (abilitiesState().status) {
-      @case ('loading') {
-        <app-skeleton [rows]="2" height="1.5rem" />
-      }
-      @case ('error') {
-        <app-error-state [message]="abilitiesErrorMessage()" (retry)="retryAbilities()" />
-      }
-      @case ('empty') {
-        <app-empty-state message="No ability data for this Pokémon." />
-      }
-      @case ('success') {
-        <ul class="detail-panel__abilities">
-          @for (ability of abilities(); track ability.name) {
-            <li>
-              <span class="detail-panel__ability-name">{{ ability.name }}</span>
-              @if (ability.isHidden) {
-                <span class="detail-panel__ability-hidden">(hidden)</span>
-              }
-              @if (ability.shortEffect) {
-                <p class="detail-panel__ability-effect">{{ ability.shortEffect }}</p>
-              }
-            </li>
+        <div class="detail-device__dpad" aria-hidden="true"></div>
+      </section>
+
+      <!-- Hinge -->
+      <div class="detail-device__hinge" aria-hidden="true"></div>
+
+      <!-- Right screen: data -->
+      <section class="detail-device__panel detail-device__panel--data">
+        <div class="detail-device__data-screen">
+          <h3 class="detail-device__data-title">Abilities</h3>
+
+          @switch (abilitiesState().status) {
+            @case ('loading') {
+              <app-skeleton [rows]="3" height="1rem" />
+            }
+            @case ('error') {
+              <app-error-state [message]="abilitiesErrorMessage()" (retry)="retryAbilities()" />
+            }
+            @case ('empty') {
+              <app-empty-state message="No ability data for this Pokémon." />
+            }
+            @case ('success') {
+              <ul class="detail-device__abilities">
+                @for (ability of abilities(); track ability.name) {
+                  <li>
+                    <span class="detail-device__ability-name"
+                      >{{ ability.name }}@if (ability.isHidden) {
+                        <em> (hidden)</em>
+                      }</span
+                    >
+                    @if (ability.shortEffect) {
+                      <p>{{ ability.shortEffect }}</p>
+                    }
+                  </li>
+                }
+              </ul>
+            }
           }
-        </ul>
-      }
-    }
-  </aside>
+        </div>
+
+        <div class="detail-device__chart-screen">
+          <app-stat-radar-chart [pokemon]="poke" />
+        </div>
+
+        <div class="detail-device__grid" aria-hidden="true">
+          @for (cell of [1, 2, 3, 4, 5, 6, 7, 8]; track cell) {
+            <span></span>
+          }
+        </div>
+
+        <div class="detail-device__type-plate">{{ poke.types[0] }}</div>
+      </section>
+    </div>
+  </div>
 }

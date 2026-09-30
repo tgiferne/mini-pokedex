@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostListener, computed, inject, input, output } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { Subject, catchError, combineLatest, filter, of, startWith, switchMap } from 'rxjs';
 
@@ -14,10 +14,10 @@ import { totalBaseStats } from '../../utils/pokemon-filter.util';
 import { StatRadarChartComponent } from '../stat-radar-chart/stat-radar-chart.component';
 
 /**
- * Slide-in side panel with full Pokémon info and a stat radar chart. Base
- * info (name/types/stats/sprite) comes from the already-cached list; only
- * abilities require a fresh network call, so that's the only piece with its
- * own loading/error/empty/success state.
+ * Full-screen dual "device screen" overlay with complete Pokémon info and a
+ * stat radar chart. Base info (name/types/stats/sprite) comes from the
+ * already-cached list; only abilities require a fresh network call, so
+ * that's the only piece with its own loading/error/empty/success state.
  */
 @Component({
   selector: 'app-pokemon-detail-panel',
@@ -75,5 +75,14 @@ export class PokemonDetailPanelComponent {
 
   protected retryAbilities(): void {
     this.retrySubject.next();
+  }
+
+  protected onBackdropClick(): void {
+    this.closePanel.emit();
+  }
+
+  @HostListener('document:keydown.escape')
+  protected onEscape(): void {
+    if (this.pokemon()) this.closePanel.emit();
   }
 }
