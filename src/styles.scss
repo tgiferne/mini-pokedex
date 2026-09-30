@@ -5,11 +5,27 @@
 // custom components at https://material.angular.dev/guide/theming
 @use '@angular/material' as mat;
 
+:root {
+  --color-primary: #007acc;
+  --color-secondary: #6c757d;
+  --color-accent: #ffb414;
+  --color-success: #28a745;
+  --color-danger: #dc3545;
+  --color-warning: #ffc107;
+  --color-surface: #131515;
+  --color-surface-2: #1e2121;
+  --color-surface-overlay: rgba(19, 21, 21, 0.75);
+  --panel-width: 393px;
+  --backdrop-blur: blur(16px);
+}
+
 html {
   height: 100%;
+  background-color: #111212;
   @include mat.theme(
     (
       color: (
+        theme-type: dark,
         primary: mat.$azure-palette,
         tertiary: mat.$blue-palette,
       ),
@@ -20,16 +36,11 @@ html {
 }
 
 body {
-  // Default the application to a light color theme. This can be changed to
-  // `dark` to enable the dark color theme, or to `light dark` to defer to the
-  // user's system settings.
-  color-scheme: light;
+  // The app is dark-themed per the design tokens above.
+  color-scheme: dark;
 
-  // Set a default background, font and text colors for the application using
-  // Angular Material's system-level CSS variables. Learn more about these
-  // variables at https://material.angular.dev/guide/system-variables
-  background-color: var(--mat-sys-surface);
-  color: var(--mat-sys-on-surface);
+  background-color: var(--color-surface);
+  color: #ffffff;
   font: var(--mat-sys-body-medium);
 
   // Reset the user agent margin.
