@@ -15,6 +15,7 @@ function makePokemon(overrides: Partial<Pokemon> & Pick<Pokemon, 'id' | 'name'>)
       { name: 'speed', baseStat: 50 },
     ],
     spriteUrl: null,
+    artworkUrl: null,
     abilities: null,
     ...overrides,
   };

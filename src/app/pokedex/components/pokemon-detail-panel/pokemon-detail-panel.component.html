@@ -16,8 +16,8 @@
         <div class="detail-device__info-screen">
           <h2 class="detail-device__name">{{ poke.name }}</h2>
           <div class="detail-device__sprite-frame">
-            @if (poke.spriteUrl) {
-              <img [src]="poke.spriteUrl" [alt]="poke.name" class="detail-device__sprite" />
+            @if (poke.artworkUrl) {
+              <img [src]="poke.artworkUrl" [alt]="poke.name" class="detail-device__sprite" />
             }
           </div>
           <div class="detail-device__types">

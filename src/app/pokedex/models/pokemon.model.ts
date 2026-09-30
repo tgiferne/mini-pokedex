@@ -19,7 +19,10 @@ export interface Pokemon {
   weight: number;
   types: string[];
   stats: PokemonStat[];
+  /** Small pixel sprite — used for compact table/dropdown rows. */
   spriteUrl: string | null;
+  /** Full-size "official artwork" illustration (card/box-art style) — used in the detail view. */
+  artworkUrl: string | null;
   abilities: PokemonAbility[] | null;
 }
 

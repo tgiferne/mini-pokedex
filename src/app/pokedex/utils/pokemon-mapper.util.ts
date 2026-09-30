@@ -1,14 +1,28 @@
 import { Pokemon, PokemonAbility, StatName } from '../models/pokemon.model';
 import { RawPokemon, RawPokemonAbility } from '../services/pokemon-graphql.types';
 
-/** Extracts a usable sprite URL from PokéAPI's loosely-typed `sprites` JSON blob. */
-function extractSpriteUrl(rawSprites: RawPokemon['pokemon_v2_pokemonsprites']): string | null {
-  const first = rawSprites[0]?.sprites;
-  if (!first) return null;
+interface ParsedSpriteUrls {
+  spriteUrl: string | null;
+  artworkUrl: string | null;
+}
 
-  const parsed = typeof first === 'string' ? safeJsonParse(first) : first;
-  const frontDefault = (parsed as Record<string, unknown> | null)?.['front_default'];
-  return typeof frontDefault === 'string' ? frontDefault : null;
+/** Parses PokéAPI's loosely-typed `sprites` JSON blob into the two image URLs the app uses. */
+function extractSpriteUrls(rawSprites: RawPokemon['pokemon_v2_pokemonsprites']): ParsedSpriteUrls {
+  const first = rawSprites[0]?.sprites;
+  if (!first) return { spriteUrl: null, artworkUrl: null };
+
+  const parsed = (typeof first === 'string' ? safeJsonParse(first) : first) as Record<string, unknown> | null;
+  const other = parsed?.['other'] as Record<string, unknown> | undefined;
+  const officialArtwork = other?.['official-artwork'] as Record<string, unknown> | undefined;
+
+  return {
+    spriteUrl: asString(parsed?.['front_default']),
+    artworkUrl: asString(officialArtwork?.['front_default']) ?? asString(parsed?.['front_default']),
+  };
+}
+
+function asString(value: unknown): string | null {
+  return typeof value === 'string' ? value : null;
 }
 
 function safeJsonParse(value: string): Record<string, unknown> | null {
@@ -20,6 +34,7 @@ function safeJsonParse(value: string): Record<string, unknown> | null {
 }
 
 export function mapRawPokemon(raw: RawPokemon): Pokemon {
+  const { spriteUrl, artworkUrl } = extractSpriteUrls(raw.pokemon_v2_pokemonsprites);
   return {
     id: raw.id,
     name: raw.name,
@@ -30,7 +45,8 @@ export function mapRawPokemon(raw: RawPokemon): Pokemon {
       name: s.pokemon_v2_stat.name as StatName,
       baseStat: s.base_stat,
     })),
-    spriteUrl: extractSpriteUrl(raw.pokemon_v2_pokemonsprites),
+    spriteUrl,
+    artworkUrl,
     abilities: null,
   };
 }
