@@ -1,23 +1,53 @@
-<section class="pokedex-page">
-  <h1 class="pokedex-page__title">Pokédex</h1>
+<div class="pokedex-device">
+  <div class="pokedex-device__shell">
+    <header class="pokedex-device__header">
+      <div class="pokedex-device__lens" [class.pokedex-device__lens--busy]="isLoading()">
+        <div class="pokedex-device__lens-glare"></div>
+      </div>
 
-  <app-pokedex-filters
-    [searchTerm]="searchTerm()"
-    [availableTypes]="availableTypes()"
-    [selectedType]="typeFilter()"
-    (searchTermChange)="store.setSearchTerm($event)"
-    (selectedTypeChange)="store.setTypeFilter($event)"
-  />
+      <div class="pokedex-device__lights">
+        <span class="pokedex-device__light pokedex-device__light--red" [class.is-on]="hasError()"></span>
+        <span class="pokedex-device__light pokedex-device__light--yellow" [class.is-on]="isLoading()"></span>
+        <span class="pokedex-device__light pokedex-device__light--green" [class.is-on]="isSuccess()"></span>
+      </div>
 
-  <app-pokedex-table
-    [state]="tableState()"
-    [sort]="sort()"
-    (sortChange)="onSortChange($event)"
-    (pageChange)="store.setPage($event)"
-    (pageSizeChange)="onPageSizeChange($event)"
-    (rowSelect)="selectedPokemonId.set($event)"
-    (retry)="store.loadPokemon()"
-  />
-</section>
+      <h1 class="pokedex-device__title">Pokédex</h1>
+
+      <button
+        type="button"
+        class="pokedex-device__refresh"
+        (click)="store.loadPokemon()"
+        [disabled]="isLoading()"
+        aria-label="Refresh Pokédex data"
+      >
+        ⟳
+      </button>
+    </header>
+
+    <div class="pokedex-device__screen">
+      <app-pokedex-filters
+        [searchTerm]="searchTerm()"
+        [availableTypes]="availableTypes()"
+        [selectedType]="typeFilter()"
+        (searchTermChange)="store.setSearchTerm($event)"
+        (selectedTypeChange)="store.setTypeFilter($event)"
+      />
+
+      <app-pokedex-table
+        [state]="tableState()"
+        [sort]="sort()"
+        (sortChange)="onSortChange($event)"
+        (pageChange)="store.setPage($event)"
+        (pageSizeChange)="onPageSizeChange($event)"
+        (rowSelect)="selectedPokemonId.set($event)"
+        (retry)="store.loadPokemon()"
+      />
+    </div>
+
+    <div class="pokedex-device__vents" aria-hidden="true">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</div>
 
 <app-pokemon-detail-panel [pokemonId]="selectedPokemonId()" (closePanel)="selectedPokemonId.set(null)" />

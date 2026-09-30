@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 
 import { PokedexFiltersComponent } from './components/pokedex-filters/pokedex-filters.component';
@@ -34,6 +34,11 @@ export class PokedexPage {
   });
 
   protected readonly selectedPokemonId = signal<number | null>(null);
+
+  /** Drive the device shell's status lights off the same state the table renders from. */
+  protected readonly isLoading = computed(() => this.tableState().status === 'loading');
+  protected readonly isSuccess = computed(() => this.tableState().status === 'success');
+  protected readonly hasError = computed(() => this.tableState().status === 'error');
 
   protected onSortChange(column: SortableColumn): void {
     this.store.setSort(column);
