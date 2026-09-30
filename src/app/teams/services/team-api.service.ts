@@ -26,12 +26,14 @@ import { mapRawTeam } from '../utils/team-mapper.util';
 export class TeamApiService {
   private readonly http = inject(HttpClient);
 
+  /** Fetches all teams belonging to the given trainer. */
   getTeams$(trainerId: number): Observable<Team[]> {
     return this.graphql$<GetTeamsResponse>(GET_TEAMS_QUERY, { trainerId }).pipe(
       map((data) => data.allTeams.map(mapRawTeam)),
     );
   }
 
+  /** Creates a new team and returns the server-assigned record (including its real id). */
   createTeam$(input: CreateTeamInput): Observable<Team> {
     return this.graphql$<CreateTeamResponse>(CREATE_TEAM_MUTATION, {
       trainer_id: input.trainerId,
@@ -41,6 +43,7 @@ export class TeamApiService {
     }).pipe(map((data) => mapRawTeam(data.createTeam)));
   }
 
+  /** Deletes the team with the given id. */
   deleteTeam$(id: number): Observable<void> {
     return this.graphql$<DeleteTeamResponse>(DELETE_TEAM_MUTATION, { id }).pipe(map(() => undefined));
   }

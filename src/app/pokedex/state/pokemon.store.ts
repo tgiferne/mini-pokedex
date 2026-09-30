@@ -68,16 +68,19 @@ export class PokemonStore {
     });
   }
 
+  /** Updates the name-search term and resets pagination to the first page. */
   setSearchTerm(term: string): void {
     this.searchTermSubject.next(term);
     this.resetToFirstPage();
   }
 
+  /** Updates the active type filter (or clears it with `null`) and resets pagination to the first page. */
   setTypeFilter(type: string | null): void {
     this.typeFilterSubject.next(type);
     this.resetToFirstPage();
   }
 
+  /** Sorts by `column`; toggles direction if it's already the active sort column, otherwise defaults to ascending. */
   setSort(column: SortableColumn): void {
     const current = this.sortSubject.value;
     const direction: SortDirection =
@@ -85,10 +88,12 @@ export class PokemonStore {
     this.sortSubject.next({ column, direction });
   }
 
+  /** Sets the current page index (0-based) without changing the page size. */
   setPage(page: number): void {
     this.pageSubject.next({ ...this.pageSubject.value, page });
   }
 
+  /** Changes the page size and resets to the first page. */
   setPageSize(pageSize: PageSize): void {
     this.pageSubject.next({ page: 0, pageSize });
   }

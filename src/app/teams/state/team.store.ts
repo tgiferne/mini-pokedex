@@ -27,6 +27,7 @@ export class TeamStore {
     this.loadTeams();
   }
 
+  /** (Re)fetches the current trainer's teams from the mock server. Used on init and Retry. */
   loadTeams(): void {
     this.stateSubject.next(asyncLoading());
     this.api.getTeams$(CURRENT_TRAINER_ID).subscribe({

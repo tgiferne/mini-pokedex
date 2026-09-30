@@ -17,6 +17,7 @@ export class CacheService {
     return storageType === 'local' ? localStorage : sessionStorage;
   }
 
+  /** Reads and JSON-parses a cached value, or `null` if missing, unreadable, or not in a browser. */
   get<T>(key: string, storageType: StorageType = 'local'): T | null {
     const storage = this.getStorage(storageType);
     if (!storage) return null;
@@ -33,6 +34,7 @@ export class CacheService {
     return null;
   }
 
+  /** JSON-stringifies and stores a value; write failures (quota, private mode) are silently ignored. */
   set<T>(key: string, value: T, storageType: StorageType = 'local'): void {
     const storage = this.getStorage(storageType);
     if (!storage) return;
@@ -45,6 +47,7 @@ export class CacheService {
     }
   }
 
+  /** Removes a stored value, if present. */
   remove(key: string, storageType: StorageType = 'local'): void {
     this.getStorage(storageType)?.removeItem(key);
   }

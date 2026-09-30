@@ -57,6 +57,7 @@ export class PokemonSelectors {
     distinctUntilChanged(),
   );
 
+  /** `allPokemon$` filtered by the debounced search term and the active type filter. */
   readonly filteredPokemon$: Observable<Pokemon[]> = combineLatest([
     this.allPokemon$,
     this.debouncedSearchTerm$,
@@ -66,6 +67,7 @@ export class PokemonSelectors {
     shareReplay(1),
   );
 
+  /** `filteredPokemon$` sorted by the store's active sort column/direction. */
   readonly sortedPokemon$: Observable<Pokemon[]> = combineLatest([
     this.filteredPokemon$,
     this.store.sort$.pipe(distinctUntilChanged(sortStateEqual)),
@@ -74,6 +76,7 @@ export class PokemonSelectors {
     shareReplay(1),
   );
 
+  /** `sortedPokemon$` sliced to the store's current page/page-size, with the total (unsliced) count. */
   readonly pagedPokemon$: Observable<PokemonPageResult> = combineLatest([
     this.sortedPokemon$,
     this.store.page$.pipe(distinctUntilChanged(pageStateEqual)),
