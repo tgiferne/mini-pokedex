@@ -1,5 +1,14 @@
 @if (pokemon(); as poke) {
+  <!--
+    Click-to-dismiss backdrop + stopPropagation on the dialog content. The
+    keyboard equivalent (Escape) is handled globally via @HostListener in the
+    component, not on this element — a full-screen scrim isn't meant to sit
+    in the tab order, so making it focusable/key-activatable here would be
+    worse UX, not better accessibility.
+  -->
+  <!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
   <div class="detail-overlay" (click)="onBackdropClick()">
+    <!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events -->
     <div
       class="detail-device"
       role="dialog"

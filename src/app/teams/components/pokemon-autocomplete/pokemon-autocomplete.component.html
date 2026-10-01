@@ -5,6 +5,7 @@
     placeholder="Add a Pokémon…"
     [formControl]="searchControl"
     [disabled]="disabled()"
+    [id]="inputId()"
     (focus)="onFocus()"
     (blur)="onBlur()"
     aria-label="Search Pokémon to add to the team"

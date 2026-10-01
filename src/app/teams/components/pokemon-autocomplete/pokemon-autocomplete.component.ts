@@ -30,6 +30,8 @@ export class PokemonAutocompleteComponent {
 
   readonly excludeIds = input<number[]>([]);
   readonly disabled = input<boolean>(false);
+  /** Id applied to the internal text input, so a parent `<label for>` can reference it. */
+  readonly inputId = input<string | null>(null);
   readonly pokemonSelected = output<Pokemon>();
 
   protected readonly searchControl = new FormControl('', { nonNullable: true });

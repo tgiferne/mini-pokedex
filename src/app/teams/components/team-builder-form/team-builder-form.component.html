@@ -19,7 +19,7 @@
   </div>
 
   <div class="team-form__group">
-    <label>Pokémon ({{ selectedPokemon().length }}/6)</label>
+    <label for="team-pokemon-picker">Pokémon ({{ selectedPokemon().length }}/6)</label>
 
     @if (selectedPokemon().length > 0) {
       <ul class="team-form__chips">
@@ -38,6 +38,7 @@
     }
 
     <app-pokemon-autocomplete
+      inputId="team-pokemon-picker"
       [excludeIds]="form.controls.pokemonIds.value"
       [disabled]="selectedPokemon().length >= 6"
       (pokemonSelected)="addPokemon($event)"

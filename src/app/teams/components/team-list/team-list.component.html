@@ -14,7 +14,12 @@
         <li
           class="team-list__item"
           [class.team-list__item--selected]="row.team.id === selectedTeamId()"
+          role="button"
+          tabindex="0"
+          [attr.aria-pressed]="row.team.id === selectedTeamId()"
           (click)="teamSelect.emit(row.team.id)"
+          (keydown.enter)="teamSelect.emit(row.team.id)"
+          (keydown.space)="$event.preventDefault(); teamSelect.emit(row.team.id)"
         >
           <div class="team-list__header">
             <span class="team-list__name">{{ row.team.name }}</span>

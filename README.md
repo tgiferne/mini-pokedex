@@ -30,6 +30,7 @@ mutations. The Pokédex itself talks directly to the public
 
 ```bash
 npm test          # unit tests (Vitest)
+npm run lint      # angular-eslint (includes template accessibility rules)
 npm run build     # production build → dist/
 ```
 
@@ -88,8 +89,6 @@ npm run build     # production build → dist/
 
 - Server-side pagination for the Pokédex (currently trades a slightly larger first fetch for
   fully-client-side table features) — would let the table scale well past Gen 1.
-- No lint tooling is wired up yet (`angular-eslint` is referenced in the dev guide but wasn't added
-  here) — `ng lint` isn't currently runnable.
 - Trainer selection is hardcoded rather than a real "current user" concept, since there's no auth in
   this task's scope.
 - The autocomplete and detail-panel abilities fetch both lean on the same retry/error pattern as the
