@@ -2,7 +2,8 @@
 
 A single-page Angular 21 app for browsing Pokémon and building a team, built against the public
 PokéAPI GraphQL endpoint and a local mock GraphQL server. See `Pokemon Task.pdf` for the original
-brief for the original task; this repo follows a set of documented coding conventions (folder structure, naming, component patterns, commit standards).
+brief; this repo follows a set of documented coding conventions (folder structure, naming, component
+patterns, commit standards).
 
 ## Setup
 
