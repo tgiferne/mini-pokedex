@@ -1,5 +1,5 @@
 import { Pokemon } from '../models/pokemon.model';
-import { distinctTypes, filterPokemon, sortPokemon, totalBaseStats } from './pokemon-filter.util';
+import { adjacentPokemonId, distinctTypes, filterPokemon, sortPokemon, totalBaseStats } from './pokemon-filter.util';
 
 function makePokemon(overrides: Partial<Pokemon> & Pick<Pokemon, 'id' | 'name'>): Pokemon {
   return {
@@ -96,5 +96,35 @@ describe('distinctTypes', () => {
 describe('totalBaseStats', () => {
   it('sums all six base stats', () => {
     expect(totalBaseStats(squirtle)).toBe(44 + 48 + 65 + 50 + 64 + 43);
+  });
+});
+
+describe('adjacentPokemonId', () => {
+  // roster is [bulbasaur(id1), charmander(id4), squirtle(id7)] — deliberately
+  // not in id order, so a passing test proves navigation follows the given
+  // list's order, not raw Pokédex number.
+  it('returns the next id in list order, not id + 1', () => {
+    expect(adjacentPokemonId(roster, 1, 1)).toBe(4); // bulbasaur -> charmander
+    expect(adjacentPokemonId(roster, 4, 1)).toBe(7); // charmander -> squirtle
+  });
+
+  it('returns the previous id in list order, not id - 1', () => {
+    expect(adjacentPokemonId(roster, 7, -1)).toBe(4); // squirtle -> charmander
+    expect(adjacentPokemonId(roster, 4, -1)).toBe(1); // charmander -> bulbasaur
+  });
+
+  it('returns null past either end of the list', () => {
+    expect(adjacentPokemonId(roster, 7, 1)).toBeNull(); // squirtle is last
+    expect(adjacentPokemonId(roster, 1, -1)).toBeNull(); // bulbasaur is first
+  });
+
+  it('returns null if the current id is not in the list', () => {
+    expect(adjacentPokemonId(roster, 999, 1)).toBeNull();
+  });
+
+  it('respects a re-sorted list order', () => {
+    const byNameDesc = sortPokemon(roster, 'name', 'desc'); // squirtle, charmander, bulbasaur
+    expect(adjacentPokemonId(byNameDesc, 7, 1)).toBe(4); // squirtle -> charmander
+    expect(adjacentPokemonId(byNameDesc, 4, 1)).toBe(1); // charmander -> bulbasaur
   });
 });

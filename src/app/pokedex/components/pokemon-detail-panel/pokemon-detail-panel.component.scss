@@ -111,20 +111,50 @@
 }
 
 .detail-device__sprite-frame {
+  position: relative;
   width: 100%;
   aspect-ratio: 4 / 3;
   border-radius: 6px;
   background: radial-gradient(ellipse at 50% 40%, #3a4a63 0%, #1c2433 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
   overflow: hidden;
 }
 
-.detail-device__sprite {
-  max-width: 85%;
-  max-height: 85%;
-  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.5));
+.detail-device__model {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  --poster-color: transparent;
+}
+
+.detail-device__model-loading {
+  @extend %sk-shimmer;
+  position: absolute;
+  inset: 0;
+  border-radius: 6px;
+}
+
+.detail-device__model-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+}
+
+.detail-device__pixel-badge {
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  width: 34px;
+  height: 34px;
+  image-rendering: pixelated;
+  background: rgba(10, 14, 20, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 4px;
+  padding: 2px;
+  box-sizing: border-box;
 }
 
 .detail-device__types {
@@ -166,35 +196,147 @@
   box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.6);
 }
 
-.detail-device__dpad {
+.detail-device__dpad-wrap {
   margin-top: auto;
-  align-self: center;
-  width: 46px;
-  height: 46px;
-  position: relative;
-  opacity: 0.9;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.375rem;
+}
 
-  &::before,
-  &::after {
+.detail-device__dpad {
+  width: 64px;
+  height: 64px;
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+}
+
+.detail-device__dpad-legend {
+  margin: 0;
+  display: flex;
+  gap: 0.5rem;
+  font-size: 0.5625rem;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 0.02em;
+}
+
+.detail-device__dpad-legend-item {
+  &--dex {
+    color: rgba(255, 255, 255, 0.65);
+  }
+
+  &--type {
+    color: #7fd4ff;
+  }
+}
+
+.detail-device__dpad-hub {
+  grid-column: 2;
+  grid-row: 2;
+  background: #111;
+  border-radius: 3px;
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.08);
+}
+
+.detail-device__dpad-btn {
+  position: relative;
+  border: none;
+  background: #1b1b1b;
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  padding: 0;
+
+  // The chevron "indent" that signals each arm is pressable.
+  &::before {
     content: '';
     position: absolute;
-    background: #1b1b1b;
-    border-radius: 3px;
-    box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.08);
+    width: 0;
+    height: 0;
+    border-style: solid;
   }
 
-  &::before {
-    left: 33%;
-    top: 0;
-    width: 34%;
-    height: 100%;
+  &:hover:not(:disabled) {
+    background: #262626;
   }
 
-  &::after {
-    top: 33%;
-    left: 0;
-    height: 34%;
-    width: 100%;
+  &:active:not(:disabled) {
+    background: #0d0d0d;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6);
+  }
+
+  &:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+
+  // Dex-number buttons (left/right) stay neutral dark; same-type buttons
+  // (up/down) get a blue tint (background + chevron color, set per-direction
+  // below), matching the legend under the pad — so the two behaviors are
+  // visually distinguishable at a glance, not just by position.
+  &--type {
+    background: #143047;
+
+    &:hover:not(:disabled) {
+      background: #1c3f5c;
+    }
+  }
+
+  &--up {
+    grid-column: 2;
+    grid-row: 1;
+    border-radius: 4px 4px 0 0;
+
+    &::before {
+      top: 6px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-width: 0 6px 7px 6px;
+      border-color: transparent transparent #8fd6ff transparent;
+    }
+  }
+
+  &--down {
+    grid-column: 2;
+    grid-row: 3;
+    border-radius: 0 0 4px 4px;
+
+    &::before {
+      bottom: 6px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-width: 7px 6px 0 6px;
+      border-color: #8fd6ff transparent transparent transparent;
+    }
+  }
+
+  &--left {
+    grid-column: 1;
+    grid-row: 2;
+    border-radius: 4px 0 0 4px;
+
+    &::before {
+      left: 6px;
+      top: 50%;
+      transform: translateY(-50%);
+      border-width: 6px 7px 6px 0;
+      border-color: transparent rgba(255, 255, 255, 0.55) transparent transparent;
+    }
+  }
+
+  &--right {
+    grid-column: 3;
+    grid-row: 2;
+    border-radius: 0 4px 4px 0;
+
+    &::before {
+      right: 6px;
+      top: 50%;
+      transform: translateY(-50%);
+      border-width: 6px 0 6px 7px;
+      border-color: transparent transparent transparent rgba(255, 255, 255, 0.55);
+    }
   }
 }
 

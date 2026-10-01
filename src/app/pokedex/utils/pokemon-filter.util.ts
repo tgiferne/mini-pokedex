@@ -37,3 +37,17 @@ export function distinctTypes(items: Pokemon[]): string[] {
 export function totalBaseStats(pokemon: Pokemon): number {
   return pokemon.stats.reduce((sum, stat) => sum + stat.baseStat, 0);
 }
+
+/**
+ * Finds the id of the Pokémon adjacent to `currentId` within `list`, in
+ * whatever order `list` is already in — used to make the detail panel's
+ * previous/next navigation follow the table's current sort/filter order
+ * rather than raw Pokédex number. Returns null at either end of the list,
+ * or if `currentId` isn't present in it.
+ */
+export function adjacentPokemonId(list: Pokemon[], currentId: number, direction: 1 | -1): number | null {
+  const index = list.findIndex((pokemon) => pokemon.id === currentId);
+  if (index === -1) return null;
+  const targetIndex = index + direction;
+  return targetIndex >= 0 && targetIndex < list.length ? list[targetIndex].id : null;
+}

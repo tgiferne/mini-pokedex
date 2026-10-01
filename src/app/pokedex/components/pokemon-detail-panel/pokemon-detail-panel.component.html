@@ -16,8 +16,37 @@
         <div class="detail-device__info-screen">
           <h2 class="detail-device__name">{{ poke.name }}</h2>
           <div class="detail-device__sprite-frame">
-            @if (poke.artworkUrl) {
-              <img [src]="poke.artworkUrl" [alt]="poke.name" class="detail-device__sprite" />
+            @if (modelUrl(); as url) {
+              <model-viewer
+                #modelViewer
+                [attr.src]="url"
+                [attr.alt]="poke.name + ' 3D model'"
+                class="detail-device__model"
+                auto-rotate
+                auto-rotate-delay="0"
+                rotation-per-second="16deg"
+                camera-controls
+                disable-zoom
+                interaction-prompt="none"
+                shadow-intensity="0.9"
+                exposure="1.1"
+                environment-image="neutral"
+                (load)="onModelLoad()"
+                (error)="onModelError()"
+              ></model-viewer>
+            }
+
+            @if (modelStatus() === 'loading') {
+              <div class="detail-device__model-loading" aria-label="Loading 3D model"></div>
+            }
+            @if (modelStatus() === 'error') {
+              <div class="detail-device__model-overlay">
+                <app-error-state message="Couldn't load the 3D model." (retry)="retryModel()" />
+              </div>
+            }
+
+            @if (poke.spriteUrl) {
+              <img [src]="poke.spriteUrl" [alt]="poke.name + ' pixel sprite'" class="detail-device__pixel-badge" />
             }
           </div>
           <div class="detail-device__types">
@@ -41,7 +70,47 @@
           <div>Total base stats: {{ totalBaseStats(poke) }}</div>
         </div>
 
-        <div class="detail-device__dpad" aria-hidden="true"></div>
+        <div class="detail-device__dpad-wrap">
+          <div class="detail-device__dpad" role="group" aria-label="Browse Pokémon">
+            <button
+              type="button"
+              class="detail-device__dpad-btn detail-device__dpad-btn--up detail-device__dpad-btn--type"
+              (click)="goToNextOfType()"
+              [disabled]="!hasNextOfType()"
+              aria-label="Next Pokémon of this type"
+              title="Next Pokémon of this type"
+            ></button>
+            <button
+              type="button"
+              class="detail-device__dpad-btn detail-device__dpad-btn--left detail-device__dpad-btn--dex"
+              (click)="goToPrevious()"
+              [disabled]="!hasPrevious()"
+              aria-label="Previous Pokémon in the table"
+              title="Previous Pokémon in the table"
+            ></button>
+            <span class="detail-device__dpad-hub" aria-hidden="true"></span>
+            <button
+              type="button"
+              class="detail-device__dpad-btn detail-device__dpad-btn--right detail-device__dpad-btn--dex"
+              (click)="goToNext()"
+              [disabled]="!hasNext()"
+              aria-label="Next Pokémon in the table"
+              title="Next Pokémon in the table"
+            ></button>
+            <button
+              type="button"
+              class="detail-device__dpad-btn detail-device__dpad-btn--down detail-device__dpad-btn--type"
+              (click)="goToPreviousOfType()"
+              [disabled]="!hasPreviousOfType()"
+              aria-label="Previous Pokémon of this type"
+              title="Previous Pokémon of this type"
+            ></button>
+          </div>
+          <p class="detail-device__dpad-legend">
+            <span class="detail-device__dpad-legend-item detail-device__dpad-legend-item--dex">◀ ▶ table order</span>
+            <span class="detail-device__dpad-legend-item detail-device__dpad-legend-item--type">▲ ▼ same type</span>
+          </p>
+        </div>
       </section>
 
       <!-- Hinge -->
