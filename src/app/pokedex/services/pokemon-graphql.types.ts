@@ -38,8 +38,3 @@ export interface RawPokemonAbility {
 export interface GetAbilitiesResponse {
   pokemon_v2_pokemonability: RawPokemonAbility[];
 }
-
-export interface GraphQlResponse<T> {
-  data?: T;
-  errors?: { message: string }[];
-}

@@ -17,8 +17,3 @@ export interface CreateTeamResponse {
 export interface DeleteTeamResponse {
   deleteTeam: { id: string | number };
 }
-
-export interface GraphQlResponse<T> {
-  data?: T;
-  errors?: { message: string }[];
-}

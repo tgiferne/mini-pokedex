@@ -48,8 +48,9 @@ npm run build     # production build → dist/
   against the pokédex's already-cached list (not a new network call).
 - **`common/`** — Shared, feature-agnostic pieces: `SkeletonComponent` / `EmptyStateComponent` /
   `ErrorStateComponent` (the three non-success branches of every `AsyncState`), `ToastService`,
-  `CacheService` (a safe `localStorage` wrapper), and the design tokens / shimmer mixin in
-  `common/styles/_shared.scss`.
+  `CacheService` (a safe `localStorage` wrapper), `GraphQlClientService` (the retry/error-mapping
+  POST helper both `PokemonApiService` and `TeamApiService` call into, parameterized by URL and
+  per-backend error copy), and the design tokens / shimmer mixin in `common/styles/_shared.scss`.
 - **State management** is hand-rolled RxJS (no NgRx/Akita/NgXS), per the task brief — each store owns
   one `BehaviorSubject` of raw state plus plain methods to mutate it; each selectors file owns the
   derived, `shareReplay`'d streams components actually subscribe to (via `toSignal()`).
@@ -91,9 +92,6 @@ npm run build     # production build → dist/
   fully-client-side table features) — would let the table scale well past Gen 1.
 - Trainer selection is hardcoded rather than a real "current user" concept, since there's no auth in
   this task's scope.
-- The autocomplete and detail-panel abilities fetch both lean on the same retry/error pattern as the
-  main list — a small shared "GraphQL request" helper would remove some duplication between
-  `PokemonApiService` and `TeamApiService`.
 - Bonus features (virtual scroll, drag-and-drop, type-highlight directive, shimmer micro-animations)
   were skipped in favor of making sure all four required UI states are solid everywhere, per the
   brief's explicit trade-off guidance.

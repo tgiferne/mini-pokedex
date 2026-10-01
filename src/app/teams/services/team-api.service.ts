@@ -1,21 +1,17 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable, catchError, map, retry, throwError, timer } from 'rxjs';
+import { Observable, map } from 'rxjs';
 
-import {
-  API_RETRY_COUNT,
-  API_RETRY_DELAY_MS,
-  MOCK_SERVER_GRAPHQL_URL,
-} from '../../common/constants/api.constants';
+import { MOCK_SERVER_GRAPHQL_URL } from '../../common/constants/api.constants';
+import { GraphQlClientService, GraphQlErrorMessages } from '../../common/services/graphql-client.service';
 import { CreateTeamInput, Team } from '../models/team.model';
 import { CREATE_TEAM_MUTATION, DELETE_TEAM_MUTATION, GET_TEAMS_QUERY } from './team-graphql.queries';
-import {
-  CreateTeamResponse,
-  DeleteTeamResponse,
-  GetTeamsResponse,
-  GraphQlResponse,
-} from './team-graphql.types';
+import { CreateTeamResponse, DeleteTeamResponse, GetTeamsResponse } from './team-graphql.types';
 import { mapRawTeam } from '../utils/team-mapper.util';
+
+const ERROR_MESSAGES: GraphQlErrorMessages = {
+  noData: 'No data returned from the team server.',
+  unreachable: "Couldn't reach the team server. Is the mock server running on port 4000?",
+};
 
 /**
  * Talks to the local json-graphql-server mock (queries + mutations for
@@ -24,47 +20,36 @@ import { mapRawTeam } from '../utils/team-mapper.util';
  */
 @Injectable({ providedIn: 'root' })
 export class TeamApiService {
-  private readonly http = inject(HttpClient);
+  private readonly gql = inject(GraphQlClientService);
 
   /** Fetches all teams belonging to the given trainer. */
   getTeams$(trainerId: number): Observable<Team[]> {
-    return this.graphql$<GetTeamsResponse>(GET_TEAMS_QUERY, { trainerId }).pipe(
-      map((data) => data.allTeams.map(mapRawTeam)),
-    );
+    return this.gql
+      .request<GetTeamsResponse>(MOCK_SERVER_GRAPHQL_URL, GET_TEAMS_QUERY, { trainerId }, ERROR_MESSAGES)
+      .pipe(map((data) => data.allTeams.map(mapRawTeam)));
   }
 
   /** Creates a new team and returns the server-assigned record (including its real id). */
   createTeam$(input: CreateTeamInput): Observable<Team> {
-    return this.graphql$<CreateTeamResponse>(CREATE_TEAM_MUTATION, {
-      trainer_id: input.trainerId,
-      name: input.name,
-      pokemon_ids: input.pokemonIds,
-      created_at: new Date().toISOString(),
-    }).pipe(map((data) => mapRawTeam(data.createTeam)));
+    return this.gql
+      .request<CreateTeamResponse>(
+        MOCK_SERVER_GRAPHQL_URL,
+        CREATE_TEAM_MUTATION,
+        {
+          trainer_id: input.trainerId,
+          name: input.name,
+          pokemon_ids: input.pokemonIds,
+          created_at: new Date().toISOString(),
+        },
+        ERROR_MESSAGES,
+      )
+      .pipe(map((data) => mapRawTeam(data.createTeam)));
   }
 
   /** Deletes the team with the given id. */
   deleteTeam$(id: number): Observable<void> {
-    return this.graphql$<DeleteTeamResponse>(DELETE_TEAM_MUTATION, { id }).pipe(map(() => undefined));
-  }
-
-  private graphql$<T>(query: string, variables: Record<string, unknown>): Observable<T> {
-    return this.http.post<GraphQlResponse<T>>(MOCK_SERVER_GRAPHQL_URL, { query, variables }).pipe(
-      retry({ count: API_RETRY_COUNT, delay: () => timer(API_RETRY_DELAY_MS) }),
-      map((response) => {
-        if (response.errors?.length) {
-          throw new Error(response.errors[0].message);
-        }
-        if (!response.data) {
-          throw new Error('No data returned from the team server.');
-        }
-        return response.data;
-      }),
-      catchError(() =>
-        throwError(
-          () => new Error("Couldn't reach the team server. Is the mock server running on port 4000?"),
-        ),
-      ),
-    );
+    return this.gql
+      .request<DeleteTeamResponse>(MOCK_SERVER_GRAPHQL_URL, DELETE_TEAM_MUTATION, { id }, ERROR_MESSAGES)
+      .pipe(map(() => undefined));
   }
 }
