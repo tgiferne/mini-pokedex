@@ -70,6 +70,18 @@ npm run build     # production build → dist/
   real keystroke after — covered by a test in `pokemon.selectors.spec.ts`.
 - **GraphQL client:** plain `HttpClient.post()` with raw query strings, not Apollo. Apollo's own
   cache would duplicate/compete with the `BehaviorSubject` stores the task explicitly asks for.
+- **3D model viewer:** the detail view's Pokémon model uses
+  [`@google/model-viewer`](https://modelviewer.dev/) (MIT) rendering GLB meshes from the
+  community, MIT-licensed [`Pokemon-3D-api/assets`](https://github.com/Pokemon-3D-api/assets)
+  dataset (served straight off `raw.githubusercontent.com`, not their sometimes-sleeping hosted
+  API). PokéAPI itself has no 3D data — this is a third-party fan asset set layered on top, with
+  its own loading/error+retry handling since it's a real network fetch of a non-trivial-sized
+  file. `model-viewer` depends on `three` as a peer dependency (installed explicitly).
+  **Known limitation:** a handful of models in that free dataset use a game "battle idle" rest
+  pose rather than the classic box-art pose — e.g. Ekans (#23) renders reared up instead of
+  coiled. Confirmed there's no alternate pose file for it in the dataset (only `regular`/`shiny`),
+  and it's baked into that specific mesh — not something fixable from this app's code without
+  different source geometry.
 
 ## What I'd improve with more time
 
